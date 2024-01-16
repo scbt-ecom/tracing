@@ -12,7 +12,7 @@ go get github.com/skbt-ecom/tracing
 log := GetLoggerTracingFromContext(сtx, log)
 ```
 
-### Get logger instance from trace request
+### Get logger instance from trace HTTP request
 ```
 ctx, w, log := GetLoggerTracingFromRequest(log, req, w)
 ```
