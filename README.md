@@ -19,5 +19,5 @@ ctx, w, log := GetLoggerTracingFromRequest(log, req, w)
 
 ### Get logger instance from trace AMQP headers
 ```
-ctx, log := GetLoggerTracingFromRequest(ctx, log, headers)
+ctx, log := GetLoggerTracingFromAmqp(ctx, log, headers)
 ```
