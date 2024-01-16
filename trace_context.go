@@ -5,6 +5,7 @@ import (
 	"fmt"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/sirupsen/logrus"
+	"github.com/skbt-ecom/logging"
 	"net/http"
 )
 
@@ -43,8 +44,9 @@ func GetTracingHeadersFromContext(ctx context.Context) *TracingStruct {
 	return &trace
 }
 
-func GetLoggerTracing(ctx context.Context, log *logrus.Entry) *logrus.Entry {
+func GetLoggerTracingFromContext(ctx context.Context, log *logging.Logger) *logging.Logger {
 	t := GetTracingHeadersFromContext(ctx)
+
 	return log.WithFields(logrus.Fields{
 		"X-B3-TraceId":      t.TraceId,
 		"X-B3-SpanId":       t.SpanId,
@@ -104,7 +106,7 @@ func getTracingFromHeaders(headers map[string][]string) map[string]string {
 	return tracing
 }
 
-func GetLoggerTracingFromRequest(log *logrus.Entry, req *http.Request, w http.ResponseWriter) (context.Context, http.ResponseWriter, *logrus.Entry) {
+func GetLoggerTracingFromRequest(log *logging.Logger, req *http.Request, w http.ResponseWriter) (context.Context, http.ResponseWriter, *logging.Logger) {
 	headers := getTracingFromHeaders(req.Header)
 	ctx := contextGen(req.Context(), headers)
 	t := GetTracingHeadersFromContext(ctx)
@@ -120,7 +122,7 @@ func GetLoggerTracingFromRequest(log *logrus.Entry, req *http.Request, w http.Re
 	})
 }
 
-func GetLoggerTracingFromAmqp(ctx context.Context, log *logrus.Entry, headers amqp.Table) (context.Context, *logrus.Entry) {
+func GetLoggerTracingFromAmqp(ctx context.Context, log *logging.Logger, headers amqp.Table) (context.Context, *logging.Logger) {
 	h := make(map[string]string, 3)
 
 	t, ok := headers["X-B3-TraceId"]
