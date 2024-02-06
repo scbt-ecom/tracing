@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	amqp "github.com/rabbitmq/amqp091-go"
-	"github.com/sirupsen/logrus"
 	"github.com/skbt-ecom/logging"
 	"net/http"
 )
@@ -47,7 +46,7 @@ func GetTracingHeadersFromContext(ctx context.Context) *TracingStruct {
 func GetLoggerTracingFromContext(ctx context.Context, log *logging.Logger) *logging.Logger {
 	t := GetTracingHeadersFromContext(ctx)
 
-	return log.WithFields(logrus.Fields{
+	return log.WithExtraFields(logging.Fields{
 		"X-B3-TraceId":      t.TraceId,
 		"X-B3-SpanId":       t.SpanId,
 		"X-B3-ParentSpanId": t.ParentSpanId,
@@ -115,7 +114,7 @@ func GetLoggerTracingFromRequest(log *logging.Logger, req *http.Request, w http.
 	w.Header().Set("X-B3-SpanId", t.SpanId)
 	w.Header().Set("X-B3-ParentSpanId", t.ParentSpanId)
 
-	return ctx, w, log.WithFields(logrus.Fields{
+	return ctx, w, log.WithExtraFields(logging.Fields{
 		"X-B3-TraceId":      t.TraceId,
 		"X-B3-SpanId":       t.SpanId,
 		"X-B3-ParentSpanId": t.ParentSpanId,
@@ -143,7 +142,7 @@ func GetLoggerTracingFromAmqp(ctx context.Context, log *logging.Logger, headers 
 	c := contextGen(ctx, h)
 	tr := GetTracingHeadersFromContext(c)
 
-	return c, log.WithFields(logrus.Fields{
+	return c, log.WithExtraFields(logging.Fields{
 		"X-B3-TraceId":      tr.TraceId,
 		"X-B3-SpanId":       tr.SpanId,
 		"X-B3-ParentSpanId": tr.ParentSpanId,
